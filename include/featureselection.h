@@ -12,10 +12,12 @@
 using namespace std;
 
 namespace FeatureSelection {
+	enum Algorithm {FORWARD, BACKWARD};
+
 	string printFeatures(set<int> &featureSet, int newFeature);
 	string printFeatures(set<int> &featureSet);
-	set<int> featureSearch(vector<vector<double>> &data);
-	double kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange);
+	set<int> featureSearch(vector<vector<double>> &data, int numFolds, Algorithm algo);
+	double kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange, Algorithm algo);
 	void setColumnsToZero(vector<vector<double>>& data, set<int>& consideredFeatures);
 	double calculateDistance(const std::vector<double>& v1, const std::vector<double>& v2);
 }
