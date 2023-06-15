@@ -4,11 +4,15 @@ project(feature-selection-ai)
 ADD_SUBDIRECTORY(googletest)
 
 ADD_EXECUTABLE(featureSelection
-    main.cpp
+    src/main.cpp
 )
 
 ADD_EXECUTABLE(test
-    test.cpp
+    tests/test.cpp
+	tests/nearestneighbortests.cpp
+	tests/loadtests.cpp
+	src/nearestneighbor.cpp
+	src/load.cpp
 )
 
 TARGET_LINK_LIBRARIES(test gtest)
