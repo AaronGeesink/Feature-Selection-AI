@@ -26,13 +26,13 @@ TEST(FeatureSearchTests, Large32Test) {
 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 }
 
-// TEST(FeatureSearchTests, XXXLarge14Test) {
-// 	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
-// 	vector<vector<double>> sampledData = sampleData(data, 2);
-// 	set<int> relevantFeatures = featureSearch(sampledData);
-// 	set<int> expectedFeatures = {1};
-// 	EXPECT_EQ(relevantFeatures, expectedFeatures);
-// }
+TEST(FeatureSearchTests, XXXLarge14Test) {
+	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
+	vector<vector<double>> sampledData = sampleData(data, 2); // sample half the data
+	set<int> relevantFeatures = featureSearch(sampledData);
+	set<int> expectedFeatures = {35, 60};
+	EXPECT_EQ(relevantFeatures, expectedFeatures);
+}
 
 TEST(KFoldTests, SimpleDatasetTest) {
 	vector<vector<double>> data = {{1,1,1}, {1,2,2}, {1,3,3}, {1,4,4}, {0,6,6}, {0,-1,-1}, {0,-2,-2}, {0,-3,-3}, {0,-4,-4}, {0,-5,-5}};
