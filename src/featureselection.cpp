@@ -7,7 +7,7 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
 	vector<bool> zeroColumns(numCols, true);
 
 	// If feature exists in consideredFeatures, don't set it to zero.
-	for(int i = 1; i < numCols - consideredFeatures.size(); i++) {
+	for(int i = 1; i < numCols; i++) {
 		if (find(consideredFeatures.begin(), consideredFeatures.end(), i) != consideredFeatures.end()) // If (Value exists in considered Features)
 			zeroColumns[i] = false;
 	}
@@ -22,7 +22,7 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
         }
     }
 
-	// Print the data
+	//Print the data
 	// for (const auto& row : data) {
 	//     for (const auto& value : row) {
 	//         std::cout << value << " ";
@@ -38,6 +38,7 @@ double FeatureSelection::calculateDistance(const vector<double>& v1, const vecto
     for (int i = 0; i < size; i++) {
         distance += pow((v1[i] - v2[i]), 2);
     }
+	//cout << distance << "\t";
     return sqrt(distance);
 }
 
@@ -59,6 +60,10 @@ double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dat
 
 		for(int j = 0; j < data.size(); j++) {
 			// Calculate the distance from this object to all other objects
+				//Print the data
+				for (int i = 0; i < objectToClassify.size(); i++) {
+				    //std::cout << objectToClassify[i] << ", " << data[j][i] << '\t';
+				}
 			double distance = calculateDistance(objectToClassify, data[j]);
 			if(distance < nearestNeighborDistance && i != j) {
 				nearestNeighborDistance = distance;
@@ -71,6 +76,6 @@ double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dat
 		if(nearestNeighborLabel == dataSet[i][0])
 			numberCorrectlyClassified++;
 	}
-	cout << numberCorrectlyClassified << "\n";
+	//cout << numberCorrectlyClassified << "\n";
 	return numberCorrectlyClassified / (double)data.size();
 }
