@@ -29,18 +29,23 @@ string FeatureSelection::printFeatures(set<int> &featureSet) {
 	return features;
 }
 
-set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
+set<int> FeatureSelection::featureSearch(vector<vector<double>> &data, int numFolds, Algorithm algo) {
 	set<int> currentSetOfFeatures; // this set is used for considering new features
 	set<int> bestSetOfFeatures; // This set is used to keep track of the best set of features (in the case of local maxima)
 	double bestAccuracyOverall = 0;
 	bool accuracyDecreased = false;
 	int numFeatures = data.at(0).size()-1;
 
+	if (algo == BACKWARD) { // if using backward elimination, fill the initial feature set with all features
+		for (int i = 0; i < numFeatures; i++)
+		currentSetOfFeatures.insert(i+1);
+	}
+
 	cout << "Beginning search.\n\n";
 	cout << fixed;
 
 	for (int i = 0; i < numFeatures; i++) {
-		int featureToAddThisLevel = -1;
+		int featureToChangeThisLevel = -1;
 		double bestAccuracyThisLevel = 0; // best accuracy found for this level
 
 		for (int j = 1; j < numFeatures+1; j++) {
@@ -48,21 +53,27 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
 			set<int> intersection;
 			set_intersection(currentSetOfFeatures.begin(), currentSetOfFeatures.end(),
 							consideredFeature.begin(), consideredFeature.end(), inserter(intersection, intersection.begin()));
-			if (intersection.size() == 0) { // if intersection set is empty, the feature is not in the current set
-				double currentAccuracy = kFoldCrossValidation(data.size(), data, currentSetOfFeatures, j); // leave one out cross-validation
+			// If intersection set is empty during forward selection OR size 1 during backward elemination,
+			// the feature has not been processed yet
+			if ((intersection.size() == 0 && algo == FORWARD) || (intersection.size() == 1 && algo == BACKWARD)) {
+				double currentAccuracy = kFoldCrossValidation(numFolds, data, currentSetOfFeatures, j, algo); // k-fold cross-validation
 				cout << "\tUsing feature(s) " << printFeatures(currentSetOfFeatures, j) << " accuracy is " << setprecision(3) << currentAccuracy*100 << "%\n";
 
 				if (currentAccuracy > bestAccuracyThisLevel) {
 					bestAccuracyThisLevel = currentAccuracy;
-					featureToAddThisLevel = j;
+					featureToChangeThisLevel = j;
 				}
 			} 
 		}
+		// add or delete the feature depending on if the algorithm is forward selection or backward elimination
+		if (algo == FORWARD)
+			currentSetOfFeatures.insert(featureToChangeThisLevel); // forward selection
+		else
+			currentSetOfFeatures.erase(featureToChangeThisLevel); // backward elimination
 
-		currentSetOfFeatures.insert(featureToAddThisLevel);
 		if (bestAccuracyThisLevel > bestAccuracyOverall) {
 			bestAccuracyOverall = bestAccuracyThisLevel;
-			bestSetOfFeatures.insert(currentSetOfFeatures.begin(), currentSetOfFeatures.end());
+			bestSetOfFeatures = currentSetOfFeatures;
 			accuracyDecreased = false;
 		}
 		else if (!accuracyDecreased){
@@ -113,10 +124,13 @@ double FeatureSelection::calculateDistance(const vector<double>& v1, const vecto
     return sqrt(distance);
 }
 
-double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange) {
+double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange, Algorithm algo) {
 	vector<vector<double>> data = dataSet;
 	set<int> consideredFeatures = currentSet;
-	consideredFeatures.insert(featureToChange);
+	if (algo == FORWARD)
+		consideredFeatures.insert(featureToChange); // forward selection
+	else
+		consideredFeatures.erase(featureToChange); // backward elimination
 	
 	setColumnsToZero(data, consideredFeatures);
 
