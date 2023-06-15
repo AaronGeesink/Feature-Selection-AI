@@ -1,6 +1,84 @@
 #include "../include/featureselection.h"
 using namespace FeatureSelection;
 
+string FeatureSelection::printFeatures(set<int> &featureSet, int newFeature) {
+	string features = "{" + to_string(newFeature);
+	if (featureSet.size() != 0)
+		features += ",";
+	for (auto it = featureSet.begin(); it != featureSet.end();) {
+		features += to_string(*it);
+		advance(it,1);
+		if (it != featureSet.end()) {
+			features += ",";
+		}
+	}
+	features += "}";
+	return features;
+}
+
+string FeatureSelection::printFeatures(set<int> &featureSet) {
+	string features = "{";
+	for (auto it = featureSet.begin(); it != featureSet.end();) {
+		features += to_string(*it);
+		advance(it,1);
+		if (it != featureSet.end()) {
+			features += ",";
+		}
+	}
+	features += "}";
+	return features;
+}
+
+set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
+	set<int> currentSetOfFeatures; // this set is used for considering new features
+	set<int> bestSetOfFeatures; // This set is used to keep track of the best set of features (in the case of local maxima)
+	double bestAccuracyOverall = 0;
+	bool accuracyDecreased = false;
+	int numFeatures = data.at(0).size()-1;
+
+	cout << "Beginning search.\n\n";
+
+	for (int i = 0; i < numFeatures; i++) {
+		int featureToAddThisLevel = -1;
+		double bestAccuracyThisLevel = 0; // best accuracy found for this level
+
+		for (int j = 1; j < numFeatures+1; j++) {
+			set<int> consideredFeature = {j};
+			set<int> intersection;
+			set_intersection(currentSetOfFeatures.begin(), currentSetOfFeatures.end(),
+							consideredFeature.begin(), consideredFeature.end(), inserter(intersection, intersection.begin()));
+			if (intersection.size() == 0) { // if intersection set is empty, the feature is not in the current set
+				double currentAccuracy = kFoldCrossValidation(1, data, currentSetOfFeatures, j); // leave one out cross-validation
+				cout << "\tUsing feature(s) " << printFeatures(currentSetOfFeatures, j) << " accuracy is " << currentAccuracy << "%\n";
+
+				if (currentAccuracy > bestAccuracyThisLevel) {
+					bestAccuracyThisLevel = currentAccuracy;
+					featureToAddThisLevel = j;
+				}
+			} 
+		}
+
+		currentSetOfFeatures.insert(featureToAddThisLevel);
+		if (bestAccuracyThisLevel > bestAccuracyOverall) {
+			bestAccuracyOverall = bestAccuracyThisLevel;
+			bestSetOfFeatures.insert(currentSetOfFeatures.begin(), currentSetOfFeatures.end());
+			accuracyDecreased = false;
+		}
+		else if (!accuracyDecreased){
+			cout << "\n(Warning, Accuracy has decreased! Continuing search in case of local maxima)";
+			accuracyDecreased = true;
+		}
+		else {
+			break;
+		}
+		cout << "\nFeature set " << printFeatures(currentSetOfFeatures) << " was best, accuracy is " << bestAccuracyThisLevel << "%\n\n";
+	}
+
+	cout << "\nFinished search!! The best feature subset is " << printFeatures(bestSetOfFeatures)
+		<< ", which has an accuracy of " << bestAccuracyOverall << "%\n\n";
+	return bestSetOfFeatures;
+}
+
 void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& consideredFeatures) {
 	int numRows = data.size();
     int numCols = data[0].size();
@@ -21,14 +99,6 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
             }
         }
     }
-
-	//Print the data
-	// for (const auto& row : data) {
-	//     for (const auto& value : row) {
-	//         std::cout << value << " ";
-	//     }
-	//     std::cout << "\n";
-	// }
 }
 
 // Function to calculate Euclidean distance between two vectors
@@ -60,10 +130,6 @@ double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dat
 
 		for(int j = 0; j < data.size(); j++) {
 			// Calculate the distance from this object to all other objects
-				//Print the data
-				for (int i = 0; i < objectToClassify.size(); i++) {
-				    //std::cout << objectToClassify[i] << ", " << data[j][i] << '\t';
-				}
 			double distance = calculateDistance(objectToClassify, data[j]);
 			if(distance < nearestNeighborDistance && i != j) {
 				nearestNeighborDistance = distance;

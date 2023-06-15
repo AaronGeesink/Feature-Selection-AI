@@ -4,6 +4,20 @@
 using namespace Load;
 using namespace FeatureSelection;
 
+TEST(FeatureSearchTests, Small32Test) {
+	vector<vector<double>> data = loadFile("./data/CS170_small_Data__32.txt");
+	set<int> relevantFeatures = featureSearch(data);
+	set<int> expectedFeatures = {3, 1, 5};
+	EXPECT_EQ(relevantFeatures, expectedFeatures);
+}
+
+TEST(FeatureSearchTests, Small33Test) {
+	vector<vector<double>> data = loadFile("./data/CS170_small_Data__33.txt");
+	set<int> relevantFeatures = featureSearch(data);
+	set<int> expectedFeatures = {8, 7, 3};
+	EXPECT_EQ(relevantFeatures, expectedFeatures);
+}
+
 TEST(KFoldTests, SimpleDatasetTest) {
 	vector<vector<double>> data = {{1,1,1}, {1,2,2}, {1,3,3}, {1,4,4}, {0,6,6}, {0,-1,-1}, {0,-2,-2}, {0,-3,-3}, {0,-4,-4}, {0,-5,-5}};
 	set<int> currentSet = {1};
