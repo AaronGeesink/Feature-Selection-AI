@@ -6,21 +6,21 @@ using namespace Load;
 TEST(IEEETests, IEEE1) {
 	string ieeeString = "2.0000000e+000";
 
-    float result = ieeeStringToDouble(ieeeString);
+    double result = ieeeStringToDouble(ieeeString);
 	EXPECT_FLOAT_EQ(result, 2);
 }
 
 TEST(IEEETests, IEEE2) {
 	string ieeeString = "4.5645400e+010";
 
-    float result = ieeeStringToDouble(ieeeString);
+    double result = ieeeStringToDouble(ieeeString);
 	EXPECT_FLOAT_EQ(result, 45645400000);
 }
 
 TEST(IEEETests, IEEE3) {
 	string ieeeString = "4.5645400e+003";
 
-    float result = ieeeStringToDouble(ieeeString);
+    double result = ieeeStringToDouble(ieeeString);
 	EXPECT_FLOAT_EQ(result, 4564.54);
 }
 
