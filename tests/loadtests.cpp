@@ -1,8 +1,6 @@
 #include "gtest/gtest.h"
-#include "../header/load.h"
-#include <string>
-
-using namespace load;
+#include "../include/load.h"
+using namespace Load;
 
 
 TEST(IEEETests, IEEE1) {
@@ -27,7 +25,7 @@ TEST(IEEETests, IEEE3) {
 }
 
 TEST(LoadTests, LoadFile) {
-	std::vector<std::vector<double>> data = loadFile("/home/csgrads/ggees001/Feature-Selection-AI/data/test_data.txt");
+	std::vector<std::vector<double>> data = loadFile("./data/test_data.txt");
 	EXPECT_EQ(data[0][1], 12340000000);
 	EXPECT_EQ(data[3][2], 3.0045);
 }
