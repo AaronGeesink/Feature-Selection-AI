@@ -14,7 +14,6 @@ using namespace std;
 namespace FeatureSelection {
 	enum Algorithm {FORWARD, BACKWARD};
 
-	string printFeatures(set<int> &featureSet, int newFeature);
 	string printFeatures(set<int> &featureSet);
 	set<int> featureSearch(vector<vector<double>> &data, int numFolds, Algorithm algo);
 	double kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange, Algorithm algo);
