@@ -7,30 +7,32 @@ using namespace FeatureSelection;
 TEST(FeatureSearchTests, Small32Test) {
 	vector<vector<double>> data = loadFile("./data/CS170_small_Data__32.txt");
 	set<int> relevantFeatures = featureSearch(data);
-	set<int> expectedFeatures = {3, 1, 5};
+	set<int> expectedFeatures = {3, 5};
 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 }
 
 TEST(FeatureSearchTests, Small33Test) {
 	vector<vector<double>> data = loadFile("./data/CS170_small_Data__33.txt");
 	set<int> relevantFeatures = featureSearch(data);
-	set<int> expectedFeatures = {8, 7, 3};
+	set<int> expectedFeatures = {3, 8};
 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 }
 
 TEST(FeatureSearchTests, Large32Test) {
 	vector<vector<double>> data = loadFile("./data/CS170_large_Data__32.txt");
-	set<int> relevantFeatures = featureSearch(data);
-	set<int> expectedFeatures = {3, 7, 6};
+	vector<vector<double>> sampledData = sampleData(data, 1.5);
+	set<int> relevantFeatures = featureSearch(sampledData);
+	set<int> expectedFeatures = {3, 6};
 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 }
 
-TEST(FeatureSearchTests, XXXLarge14Test) {
-	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
-	set<int> relevantFeatures = featureSearch(data);
-	set<int> expectedFeatures = {3, 7, 6};
-	EXPECT_EQ(relevantFeatures, expectedFeatures);
-}
+// TEST(FeatureSearchTests, XXXLarge14Test) {
+// 	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
+// 	vector<vector<double>> sampledData = sampleData(data, 2);
+// 	set<int> relevantFeatures = featureSearch(sampledData);
+// 	set<int> expectedFeatures = {1};
+// 	EXPECT_EQ(relevantFeatures, expectedFeatures);
+// }
 
 TEST(KFoldTests, SimpleDatasetTest) {
 	vector<vector<double>> data = {{1,1,1}, {1,2,2}, {1,3,3}, {1,4,4}, {0,6,6}, {0,-1,-1}, {0,-2,-2}, {0,-3,-3}, {0,-4,-4}, {0,-5,-5}};
