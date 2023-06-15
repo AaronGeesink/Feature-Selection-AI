@@ -9,8 +9,9 @@
 using namespace std;
 
 namespace FeatureSelection {
-	float kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToAdd);
+	double kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToAdd);
 	void setColumnsToZero(vector<vector<double>>& data, set<int>& consideredFeatures);
+	double calculateDistance(const std::vector<double>& v1, const std::vector<double>& v2);
 }
 
 #endif

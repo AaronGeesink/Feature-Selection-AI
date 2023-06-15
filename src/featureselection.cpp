@@ -14,7 +14,7 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
 
 	// Set the columns to zero that are marked in the zeroColumns vector
     for (int i = 0; i < numRows; i++) {
-        for (int j = 1; j < numCols; j++) {
+        for (int j = 0; j < numCols; j++) {
             if (zeroColumns[j]) {
                 //erase(data[i][j]); // Maybe useful for optimization
 				data[i][j] = 0;
@@ -22,7 +22,7 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
         }
     }
 
-	// //Print the loaded data
+	// Print the data
 	// for (const auto& row : data) {
 	//     for (const auto& value : row) {
 	//         std::cout << value << " ";
@@ -31,30 +31,46 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
 	// }
 }
 
-float FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToAdd) {
+// Function to calculate Euclidean distance between two vectors
+double FeatureSelection::calculateDistance(const vector<double>& v1, const vector<double>& v2) {
+    double distance = 0.0;
+    int size = v1.size();
+    for (int i = 0; i < size; i++) {
+        distance += pow((v1[i] - v2[i]), 2);
+    }
+    return sqrt(distance);
+}
+
+double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToAdd) {
 	vector<vector<double>> data = dataSet;
 	set<int> consideredFeatures = currentSet;
 	consideredFeatures.insert(featureToAdd);
 	
 	setColumnsToZero(data, consideredFeatures);
 
-	for(int i = 0; i < data.size(); i++) {
-		data[i][featureToAdd] = 0;
-	}
-
 	int numberCorrectlyClassified = 0;
 
 	for(int i = 0; i < data.size(); i++) {
 		vector<double> objectToClassify = data[i];
-		int labelOfObjectToClassify = data[i][0];
 
-		nearestNeighborDistance = 999999999;
-		nearestNeighborLocation = 999999999;
+		double nearestNeighborDistance = 999999999;
+		int nearestNeighborIndex = 99999;
+		int nearestNeighborLabel = 999;
 
-		for(int i = 0; i < data.size(); i++) {
+		for(int j = 0; j < data.size(); j++) {
 			// Calculate the distance from this object to all other objects
+			double distance = calculateDistance(objectToClassify, data[j]);
+			if(distance < nearestNeighborDistance && i != j) {
+				nearestNeighborDistance = distance;
+				nearestNeighborIndex = j;
+				nearestNeighborLabel = dataSet[j][0];
+				//cout << dataSet[j][0] << "\t";
+			}
 		}
+		//cout << dataSet[nearestNeighborIndex][0] << "\t" << dataSet[i][0] << "\t";
+		if(nearestNeighborLabel == dataSet[i][0])
+			numberCorrectlyClassified++;
 	}
-
-	return rand() / (float)RAND_MAX;
+	cout << numberCorrectlyClassified << "\n";
+	return numberCorrectlyClassified / (double)data.size();
 }
