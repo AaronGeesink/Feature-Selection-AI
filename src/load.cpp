@@ -23,7 +23,7 @@ vector<vector<double>> Load::loadFile(string file) {
 	vector<vector<double>> data;
 	ifstream inputFile(file);
 	if (!inputFile) {
-		cerr << "Failed to open the file." << endl;
+		cout << "Failed to open the file." << "\n";
 		return data;
 	}
 
