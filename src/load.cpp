@@ -4,12 +4,12 @@ using namespace Load;
 double Load::ieeeStringToDouble(std::string str) {
 	// Extracting the significand and exponent parts from the string
 	size_t ePos = str.find('e');
-	std::string significandStr = str.substr(0, ePos);
-	std::string exponentStr = str.substr(ePos + 1);
+	string significandStr = str.substr(0, ePos);
+	string exponentStr = str.substr(ePos + 1);
 
 	// Converting the significand and exponent strings to double values
-	std::istringstream significandIss(significandStr);
-	std::istringstream exponentIss(exponentStr);
+	istringstream significandIss(significandStr);
+	istringstream exponentIss(exponentStr);
 	double significand, exponent;
 	significandIss >> significand;
 	exponentIss >> exponent;
@@ -19,18 +19,18 @@ double Load::ieeeStringToDouble(std::string str) {
 }
 
 // Load a all values in file and return them as a 2D vector
-std::vector<std::vector<double>> Load::loadFile(string file) {
-	std::vector<std::vector<double>> data;
-	std::ifstream inputFile(file);
+vector<vector<double>> Load::loadFile(string file) {
+	vector<vector<double>> data;
+	ifstream inputFile(file);
 	if (!inputFile) {
-		std::cerr << "Failed to open the file." << std::endl;
+		cerr << "Failed to open the file." << endl;
 		return data;
 	}
 
-	std::string line;
-	while (std::getline(inputFile, line)) {
-		std::istringstream iss(line);
-		std::vector<double> row;
+	string line;
+	while (getline(inputFile, line)) {
+		istringstream iss(line);
+		vector<double> row;
 
 		double value;
 		while (iss >> value) {
@@ -39,13 +39,27 @@ std::vector<std::vector<double>> Load::loadFile(string file) {
 		data.push_back(row);
 	}
 
-	// Print the loaded data
-	// for (const auto& row : data) {
-	//     for (const auto& value : row) {
-	//         std::cout << value << " ";
-	//     }
-	//     std::cout << std::endl;
-	// }
-
 	return data;
+}
+
+// Sample a subset of the loaded data.
+// The original data is shuffled, and then a subset of it is sampled based on the sampleDivisor
+// Larger sampleDivisor means a smaller sample size
+vector<vector<double>> Load::sampleData(vector<vector<double>> data, double sampleDivisor) {
+	
+	// randomly shuffle the data
+	auto rng = default_random_engine {};
+	shuffle(data.begin(), data.end(), rng);
+
+	// divide the dataset into a number of subsets equal to SampleDivisor, and grab the first subset.
+	if(sampleDivisor > data.size())
+		sampleDivisor = data.size();
+
+	vector<vector<double>> sampledData;
+	int sampleSize = data.size() / sampleDivisor;
+
+	for (int i = 0; i < sampleSize; i++) {
+		sampledData.push_back(data[i]);
+	}
+	return sampledData;
 }
