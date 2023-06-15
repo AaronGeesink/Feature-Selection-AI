@@ -9,7 +9,6 @@ TEST(KFoldTests, SimpleDatasetTest) {
 	set<int> currentSet = {1};
 	int featureToAdd = 2;
 	double accuracy = kFoldCrossValidation(1, data, currentSet, featureToAdd);
-	//cout << accuracy << "\n";
 	accuracy = round(accuracy*1000)/1000;
 	EXPECT_EQ(accuracy, 0.900);
 }
@@ -19,7 +18,6 @@ TEST(KFoldTests, Small32Test) {
 	set<int> currentSet = {3,1};
 	int featureToAdd = 5;
 	double accuracy = kFoldCrossValidation(1, data, currentSet, featureToAdd);
-	//cout << accuracy << "\n";
 	accuracy = round(accuracy*1000)/1000;
 	EXPECT_EQ(accuracy, 0.954);
 }
@@ -29,7 +27,6 @@ TEST(KFoldTests, Small33Test) {
 	set<int> currentSet = {8,7};
 	int featureToAdd = 3;
 	double accuracy = kFoldCrossValidation(1, data, currentSet, featureToAdd);
-	//cout << accuracy << "\n";
 	accuracy = round(accuracy*1000)/1000;
 	EXPECT_EQ(accuracy, 0.949);
 }
@@ -39,7 +36,6 @@ TEST(KFoldTests, Large32Test) {
 	set<int> currentSet = {3,7};
 	int featureToAdd = 6;
 	double accuracy = kFoldCrossValidation(1, data, currentSet, featureToAdd);
-	//cout << accuracy << "\n";
 	accuracy = round(accuracy*1000)/1000;
 	EXPECT_EQ(accuracy, 0.963);
 }
