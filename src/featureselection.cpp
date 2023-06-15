@@ -1,21 +1,6 @@
 #include "../include/featureselection.h"
 using namespace FeatureSelection;
 
-string FeatureSelection::printFeatures(set<int> &featureSet, int newFeature) {
-	string features = "{" + to_string(newFeature);
-	if (featureSet.size() != 0)
-		features += ",";
-	for (auto it = featureSet.begin(); it != featureSet.end();) {
-		features += to_string(*it);
-		advance(it,1);
-		if (it != featureSet.end()) {
-			features += ",";
-		}
-	}
-	features += "}";
-	return features;
-}
-
 string FeatureSelection::printFeatures(set<int> &featureSet) {
 	string features = "{";
 	for (auto it = featureSet.begin(); it != featureSet.end();) {
@@ -57,7 +42,12 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data, int numFo
 			// the feature has not been processed yet
 			if ((intersection.size() == 0 && algo == FORWARD) || (intersection.size() == 1 && algo == BACKWARD)) {
 				double currentAccuracy = kFoldCrossValidation(numFolds, data, currentSetOfFeatures, j, algo); // k-fold cross-validation
-				cout << "\tUsing feature(s) " << printFeatures(currentSetOfFeatures, j) << " accuracy is " << setprecision(3) << currentAccuracy*100 << "%\n";
+
+				// display the information about the current feature
+				set<int> featuresToDisplay = currentSetOfFeatures;
+				if (algo == FORWARD) featuresToDisplay.insert(j);
+				else featuresToDisplay.erase(j);
+				cout << "\tUsing feature(s) " << printFeatures(featuresToDisplay) << " accuracy is " << setprecision(3) << currentAccuracy*100 << "%\n";
 
 				if (currentAccuracy > bestAccuracyThisLevel) {
 					bestAccuracyThisLevel = currentAccuracy;
