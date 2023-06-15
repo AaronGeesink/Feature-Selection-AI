@@ -47,7 +47,8 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data, int numFo
 				set<int> featuresToDisplay = currentSetOfFeatures;
 				if (algo == FORWARD) featuresToDisplay.insert(j);
 				else featuresToDisplay.erase(j);
-				cout << "\tUsing feature(s) " << printFeatures(featuresToDisplay) << " accuracy is " << setprecision(3) << currentAccuracy*100 << "%\n";
+				cout << "\tUsing feature(s) " << printFeatures(featuresToDisplay) << " accuracy is "
+					<< setprecision(3) << currentAccuracy*100 << "%\n";
 
 				if (currentAccuracy > bestAccuracyThisLevel) {
 					bestAccuracyThisLevel = currentAccuracy;
@@ -73,7 +74,8 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data, int numFo
 		else {
 			break;
 		}
-		cout << "\nFeature set " << printFeatures(currentSetOfFeatures) << " was best, accuracy is " << setprecision(3) << bestAccuracyThisLevel*100 << "%\n\n";
+		cout << "\nFeature set " << printFeatures(currentSetOfFeatures) << " was best, accuracy is "
+			<< setprecision(3) << bestAccuracyThisLevel*100 << "%\n\n";
 	}
 
 	cout << "\nFinished search!! The best feature subset is " << printFeatures(bestSetOfFeatures)
@@ -88,7 +90,8 @@ void FeatureSelection::setColumnsToZero(vector<vector<double>>& data, set<int>& 
 
 	// If feature exists in consideredFeatures, don't set it to zero.
 	for(int i = 1; i < numCols; i++) {
-		if (find(consideredFeatures.begin(), consideredFeatures.end(), i) != consideredFeatures.end()) // If (Value exists in considered Features)
+		// If (Value exists in considered Features)
+		if (find(consideredFeatures.begin(), consideredFeatures.end(), i) != consideredFeatures.end())
 			zeroColumns[i] = false;
 	}
 
@@ -110,7 +113,6 @@ double FeatureSelection::calculateDistance(const vector<double>& v1, const vecto
     for (int i = 0; i < size; i++) {
         distance += pow((v1[i] - v2[i]), 2);
     }
-	//cout << distance << "\t";
     return sqrt(distance);
 }
 
@@ -144,14 +146,11 @@ double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dat
 					nearestNeighborDistance = distance;
 					nearestNeighborIndex = j;
 					nearestNeighborLabel = dataSet[j][0];
-					//cout << dataSet[j][0] << "\t";
 				}
 			}
-			//cout << dataSet[nearestNeighborIndex][0] << "\t" << dataSet[i][0] << "\t";
 			if(nearestNeighborLabel == dataSet[m * foldSize + i][0])
 				numberCorrectlyClassified++;	
 		}
 	}
-	//cout << numberCorrectlyClassified << "\n";
 	return numberCorrectlyClassified / (double)data.size();
 }
