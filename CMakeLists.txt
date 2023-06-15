@@ -4,7 +4,9 @@ project(feature-selection-ai)
 ADD_SUBDIRECTORY(googletest)
 
 ADD_EXECUTABLE(featureSelection
-    main.cpp
+    src/main.cpp
+	src/load.cpp
+	src/featureselection.cpp
 )
 
 ADD_EXECUTABLE(test
