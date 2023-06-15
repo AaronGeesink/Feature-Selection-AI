@@ -37,6 +37,7 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
 	int numFeatures = data.at(0).size()-1;
 
 	cout << "Beginning search.\n\n";
+	cout << fixed;
 
 	for (int i = 0; i < numFeatures; i++) {
 		int featureToAddThisLevel = -1;
@@ -48,8 +49,8 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
 			set_intersection(currentSetOfFeatures.begin(), currentSetOfFeatures.end(),
 							consideredFeature.begin(), consideredFeature.end(), inserter(intersection, intersection.begin()));
 			if (intersection.size() == 0) { // if intersection set is empty, the feature is not in the current set
-				double currentAccuracy = kFoldCrossValidation(1, data, currentSetOfFeatures, j); // leave one out cross-validation
-				cout << "\tUsing feature(s) " << printFeatures(currentSetOfFeatures, j) << " accuracy is " << currentAccuracy << "%\n";
+				double currentAccuracy = kFoldCrossValidation(data.size(), data, currentSetOfFeatures, j); // leave one out cross-validation
+				cout << "\tUsing feature(s) " << printFeatures(currentSetOfFeatures, j) << " accuracy is " << setprecision(3) << currentAccuracy*100 << "%\n";
 
 				if (currentAccuracy > bestAccuracyThisLevel) {
 					bestAccuracyThisLevel = currentAccuracy;
@@ -71,11 +72,11 @@ set<int> FeatureSelection::featureSearch(vector<vector<double>> &data) {
 		else {
 			break;
 		}
-		cout << "\nFeature set " << printFeatures(currentSetOfFeatures) << " was best, accuracy is " << bestAccuracyThisLevel << "%\n\n";
+		cout << "\nFeature set " << printFeatures(currentSetOfFeatures) << " was best, accuracy is " << setprecision(3) << bestAccuracyThisLevel*100 << "%\n\n";
 	}
 
 	cout << "\nFinished search!! The best feature subset is " << printFeatures(bestSetOfFeatures)
-		<< ", which has an accuracy of " << bestAccuracyOverall << "%\n\n";
+		<< ", which has an accuracy of " << setprecision(3) << bestAccuracyOverall*100 << "%\n\n";
 	return bestSetOfFeatures;
 }
 
@@ -112,35 +113,40 @@ double FeatureSelection::calculateDistance(const vector<double>& v1, const vecto
     return sqrt(distance);
 }
 
-double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToAdd) {
+double FeatureSelection::kFoldCrossValidation(int k, vector<vector<double>> &dataSet, set<int> &currentSet, int featureToChange) {
 	vector<vector<double>> data = dataSet;
 	set<int> consideredFeatures = currentSet;
-	consideredFeatures.insert(featureToAdd);
+	consideredFeatures.insert(featureToChange);
 	
 	setColumnsToZero(data, consideredFeatures);
 
+	int foldSize = data.size() / k;
 	int numberCorrectlyClassified = 0;
 
-	for(int i = 0; i < data.size(); i++) {
-		vector<double> objectToClassify = data[i];
+	for(int m = 0; m < k; m++) { // The fold we are on
+		for(int i = 0; i < foldSize; i++) { // The value in the fold we are on
+			vector<double> objectToClassify = data[m * foldSize + i];
 
-		double nearestNeighborDistance = 999999999;
-		int nearestNeighborIndex = 99999;
-		int nearestNeighborLabel = 999;
+			double nearestNeighborDistance = 999999999;
+			int nearestNeighborIndex = 99999;
+			int nearestNeighborLabel = 999;
 
-		for(int j = 0; j < data.size(); j++) {
-			// Calculate the distance from this object to all other objects
-			double distance = calculateDistance(objectToClassify, data[j]);
-			if(distance < nearestNeighborDistance && i != j) {
-				nearestNeighborDistance = distance;
-				nearestNeighborIndex = j;
-				nearestNeighborLabel = dataSet[j][0];
-				//cout << dataSet[j][0] << "\t";
+			for(int j = 0; j < data.size(); j++) {
+				if(j >= m * foldSize && j < m * foldSize + foldSize - 1) // Skip the current fold
+					continue;
+				// Calculate the distance from this object to all other objects
+				double distance = calculateDistance(objectToClassify, data[j]);
+				if(distance < nearestNeighborDistance && m * foldSize + i != j) {
+					nearestNeighborDistance = distance;
+					nearestNeighborIndex = j;
+					nearestNeighborLabel = dataSet[j][0];
+					//cout << dataSet[j][0] << "\t";
+				}
 			}
+			//cout << dataSet[nearestNeighborIndex][0] << "\t" << dataSet[i][0] << "\t";
+			if(nearestNeighborLabel == dataSet[m * foldSize + i][0])
+				numberCorrectlyClassified++;	
 		}
-		//cout << dataSet[nearestNeighborIndex][0] << "\t" << dataSet[i][0] << "\t";
-		if(nearestNeighborLabel == dataSet[i][0])
-			numberCorrectlyClassified++;
 	}
 	//cout << numberCorrectlyClassified << "\n";
 	return numberCorrectlyClassified / (double)data.size();
