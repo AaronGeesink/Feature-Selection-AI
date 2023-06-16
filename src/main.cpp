@@ -34,7 +34,18 @@ int main() {
 			choice = "0";
 		}
 	}
-	
+
+	int sampleDivisor = 1;
+	cout << "\nChoose the integer amount you would like to divide the data by for your sample\n";
+	cout << "1 = Sample all data\n";
+	cout << "2 = Sample half the data\n";
+	cout << "4 = Sample a quarter of the data\n";
+	cout << "Or provide your own decimal divisor\n";
+	cout << "Choice: ";
+	cin >> sampleDivisor;
+
+	vector<vector<double>> sampledData = sampleData(data, sampleDivisor); // sample part of the data
+
 	int numFolds;
 
 	cout << "\nHow many folds would you like for k-fold cross validation?\n";
@@ -45,24 +56,13 @@ int main() {
 	cin >> choice;
 
 	if (choice == "1")
-		numFolds = data.size();
+		numFolds = sampledData.size();
 	else if (choice == "2")
-		numFolds = data.size()/2;
+		numFolds = sampledData.size()/2;
 	else if (choice == "3") {
 		cout << "Please provide the integer number of folds: ";
 		cin >> numFolds;
 	}
-
-	int sampleDivisor = 1;
-	cout << "\nChoose the integer amount you would like to divide the data by for your sample\n";
-	cout << "1 = Sample all data\n";
-	cout << "2 = Sample half the data\n";
-	cout << "4 = Sample a quarter of the data\n";
-	cout << "Or provide your own integer divisor\n";
-	cout << "Choice: ";
-	cin >> sampleDivisor;
-
-	vector<vector<double>> sampledData = sampleData(data, sampleDivisor); // sample part of the data
 
 	// find the default leave-one-out accuracy
 	int numFeatures = data[0].size()-1;
@@ -76,10 +76,10 @@ int main() {
 		leaveOneOutFeatures.insert(numFeatures);
 
 	double leaveOneOutAccuracy = kFoldCrossValidation(sampledData.size(), sampledData, leaveOneOutFeatures, numFeatures, algorithm);
-	cout << std::fixed << "\n\nRunning nearest neighbor will all " << numFeatures
+	cout << std::fixed << "\n\nRunning nearest neighbor with all " << numFeatures
 		<< " features, using \"leave-one-out\" evaluation, I get an accuracy of " << std::setprecision(3) << leaveOneOutAccuracy*100 << "%\n\n"; 
 
-	set<int> relevantFeatures = featureSearch(data, numFolds, algorithm);
+	set<int> relevantFeatures = featureSearch(sampledData, numFolds, algorithm);
 
 	return 0;
 }
