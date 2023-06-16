@@ -57,14 +57,29 @@ int main() {
 	cout << "\nChoose the integer amount you would like to divide the data by for your sample\n";
 	cout << "1 = Sample all data\n";
 	cout << "2 = Sample half the data\n";
-	cout << "4 = Sample a quarter of th data\n";
+	cout << "4 = Sample a quarter of the data\n";
 	cout << "Or provide your own integer divisor\n";
 	cout << "Choice: ";
 	cin >> sampleDivisor;
 
-	vector<vector<double>> sampledData = sampleData(data, sampleDivisor); // sample half the data
+	vector<vector<double>> sampledData = sampleData(data, sampleDivisor); // sample part of the data
 
-	cout << "\n";
+	// find the default leave-one-out accuracy
+	int numFeatures = data[0].size()-1;
+	set<int> leaveOneOutFeatures;
+	if (algorithm = FORWARD) {
+		for (int i = 1; i < numFeatures; i++) {
+			leaveOneOutFeatures.insert(i);
+		}
+	}
+	else
+		leaveOneOutFeatures.insert(numFeatures);
+
+	double leaveOneOutAccuracy = kFoldCrossValidation(sampledData.size(), sampledData, leaveOneOutFeatures, numFeatures, algorithm);
+	cout << std::fixed << "\n\nRunning nearest neighbor will all " << numFeatures
+		<< " features, using \"leave-one-out\" evaluation, I get an accuracy of " << std::setprecision(3) << leaveOneOutAccuracy*100 << "%\n\n"; 
+
 	set<int> relevantFeatures = featureSearch(data, numFolds, algorithm);
+
 	return 0;
 }
