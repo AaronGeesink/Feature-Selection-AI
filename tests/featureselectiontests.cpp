@@ -40,7 +40,7 @@ TEST(FeatureSearchTests, Large32Test) {
 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 }
 
-// TEST(FeatureSearchTests, XXXLarge14Test) {
+// TEST(FeatureSearchTests, XXXLarge14TestForward) {
 // 	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
 // 	vector<vector<double>> sampledData = sampleData(data, 2); // sample half the data
 // 	set<int> relevantFeatures = featureSearch(sampledData, 10, FORWARD); // 10 folds
@@ -48,7 +48,7 @@ TEST(FeatureSearchTests, Large32Test) {
 // 	EXPECT_EQ(relevantFeatures, expectedFeatures);
 // }
 
-// TEST(FeatureSearchTests, XXXLarge14Test) {
+// TEST(FeatureSearchTests, XXXLarge14TestBackward) {
 // 	vector<vector<double>> data = loadFile("./data/CS170_XXXlarge_Data__14.txt");
 // 	vector<vector<double>> sampledData = sampleData(data, 3); // sample a third of the data
 // 	set<int> relevantFeatures = featureSearch(sampledData, 2, BACKWARD); // 2 folds
