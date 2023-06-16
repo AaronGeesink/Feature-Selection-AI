@@ -12,9 +12,6 @@
 using namespace std;
 
 namespace Load {
-    // Converts ieee string to double (not needed)
-    double ieeeStringToDouble(std::string str);
-
     // Loads all values in file and return them as a 2D vector
     std::vector<std::vector<double>> loadFile(string file);
 

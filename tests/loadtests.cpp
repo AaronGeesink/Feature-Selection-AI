@@ -3,27 +3,6 @@
 using namespace Load;
 
 
-TEST(IEEETests, IEEE1) {
-	string ieeeString = "2.0000000e+000";
-
-    double result = ieeeStringToDouble(ieeeString);
-	EXPECT_FLOAT_EQ(result, 2);
-}
-
-TEST(IEEETests, IEEE2) {
-	string ieeeString = "4.5645400e+010";
-
-    double result = ieeeStringToDouble(ieeeString);
-	EXPECT_FLOAT_EQ(result, 45645400000);
-}
-
-TEST(IEEETests, IEEE3) {
-	string ieeeString = "4.5645400e+003";
-
-    double result = ieeeStringToDouble(ieeeString);
-	EXPECT_FLOAT_EQ(result, 4564.54);
-}
-
 TEST(LoadTests, LoadFile) {
 	std::vector<std::vector<double>> data = loadFile("./data/test_data.txt");
 	EXPECT_EQ(data[0][1], 12340000000);

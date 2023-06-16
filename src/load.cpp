@@ -1,23 +1,6 @@
 #include "../include/load.h"
 using namespace Load;
 
-double Load::ieeeStringToDouble(std::string str) {
-	// Extracting the significand and exponent parts from the string
-	size_t ePos = str.find('e');
-	string significandStr = str.substr(0, ePos);
-	string exponentStr = str.substr(ePos + 1);
-
-	// Converting the significand and exponent strings to double values
-	istringstream significandIss(significandStr);
-	istringstream exponentIss(exponentStr);
-	double significand, exponent;
-	significandIss >> significand;
-	exponentIss >> exponent;
-
-	// Calculating the final value
-	return significand * pow(10, exponent);
-}
-
 // Load a all values in file and return them as a 2D vector
 vector<vector<double>> Load::loadFile(string file) {
 	vector<vector<double>> data;
